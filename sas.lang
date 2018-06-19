@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ This file is part of GtkSourceView
+
+ Author: Antoine Colombier <conatct@antoinecolombier.fr>
+ Copyright (C) 2018 Antoine Colombier <conatct@antoinecolombier.fr
+
+ GtkSourceView is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ GtkSourceView is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, see <http://www.gnu.org/licenses/>.
+
+-->
+<language id="sas" name="SAS" version="2.0" _section="Scientific">
+  <metadata>
+    <property name="mimetypes">application/x-sas</property>
+    <property name="globs">*.sas</property>
+    <property name="line-comment-start">\;</property>
+  </metadata>
+
+  <styles>
+    <style id="comment" name="Comment" map-to="def:comment"/>
+    <style id="preprocessor" name="Preprocessor" map-to="def:preprocessor"/>
+    <style id="char" name="Character" map-to="def:character"/>
+    <style id="keyword" name="Keyword" map-to="def:keyword"/>
+    <style id="type" name="Data Type" map-to="def:type"/>
+
+  </styles>
+
+  <default-regex-options case-sensitive="false"/>
+
+  <definitions>
+    <context id="embedded-lang-hook">
+      <start>\%{def:never-match}</start>
+      <end></end>
+    </context>
+
+    <context id="sas-sql">
+      <include>
+        <context ref="embedded-lang-hook"/>
+        <!-- Some cleaning to do to remove none standard SAS SQL -->
+        <context ref="sql:ansi-datatypes"/>
+        <context ref="sql:sql-ds-and-db2-datatypes"/>
+        <context ref="sql:text-literals"/>
+        <context ref="sql:integer-literals"/>
+        <context ref="sql:number-literals"/>
+        <context ref="sql:size-clause"/>
+        <context ref="sql:unlimited"/>
+        <context ref="sql:null"/>
+        <context ref="sql:block-comment"/>
+        <context ref="sql:line-comment"/>
+        <context ref="sql:numeric-functions"/>
+        <context ref="sql:character-functions-returning-character-values"/>
+        <context ref="sql:nls-character-functions"/>
+        <context ref="sql:character-functions-returning-number-values"/>
+        <context ref="sql:datetime-functions"/>
+        <context ref="sql:general-comparison-functions"/>
+        <context ref="sql:conversion-functions"/>
+        <context ref="sql:large-object-functions"/>
+        <context ref="sql:collection-functions"/>
+        <context ref="sql:hierarchical-function"/>
+        <context ref="sql:data-mining-functions"/>
+        <context ref="sql:xml-functions"/>
+        <context ref="sql:encoding-and-decoding-functions"/>
+        <context ref="sql:null-related-functions"/>
+        <context ref="sql:environment-and-identifier-functions"/>
+        <context ref="sql:aggregate-functions"/>
+        <context ref="sql:analytic-functions"/>
+        <context ref="sql:object-reference-functions"/>
+        <context ref="sql:model-functions"/>
+        <context ref="sql:ansi-reserved-words"/>
+        <context ref="sql:sql-statements"/>
+        <context ref="sql:operators"/>
+        <context ref="sql:conditions"/>
+      </include>
+    </context>
+
+    <context id="line-comment" style-ref="comment" end-at-line-end="true" class="comment" class-disabled="no-spell-check">
+      <start>;</start>
+      <include>
+        <context ref="def:in-line-comment"/>
+      </include>
+    </context>
+
+    <context id="proc-sql" class="no-spell-check" style-ref="def:builtin" end-parent="true" extend-parent="true">
+      <start>proc sql</start>
+      <end>quit</end>
+      <include>
+        <context sub-pattern="0" where="start"/>
+        <context sub-pattern="0" where="end"/>
+        <context ref="sas-sql"/>
+      </include>
+    </context>    
+
+    <context id="fed-sql" class="no-spell-check" style-ref="def:builtin" end-parent="true" extend-parent="true">
+      <start>proc fedsql</start>
+      <end>quit</end>
+      <include>
+        <context sub-pattern="0" where="start"/>
+        <context sub-pattern="0" where="end"/>
+        <context ref="sas-sql"/>
+      </include>
+    </context>
+
+
+    <context id="keywords" style-ref="keyword">
+      <keyword>if</keyword>
+      <keyword>and</keyword>
+      <keyword>or</keyword>
+      <keyword>set</keyword>
+      <keyword>then</keyword>
+      <keyword>keep</keyword>
+      <keyword>drop</keyword>
+      <keyword>delete</keyword>
+      <keyword>rename</keyword>
+      <keyword>merge</keyword>
+      <keyword>by</keyword>
+    </context>
+
+    <context id="preprocessor" style-ref="preprocessor">
+      <prefix>^%</prefix>
+      <keyword>let</keyword>
+      <keyword>put</keyword>
+    </context>
+
+    <context id="special-constants" style-ref="def:function">
+      <keyword>sort</keyword>
+      <keyword>dm</keyword>
+      <keyword>ne</keyword>
+      <keyword>\.</keyword>
+    </context>
+
+    <context id="boolean" style-ref="def:boolean">
+      <keyword>FALSE</keyword>
+      <keyword>TRUE</keyword>
+    </context>
+
+    <context id="types" style-ref="def:builtin">
+      <keyword>proc</keyword>
+      <keyword>run</keyword>
+      <keyword>data</keyword>
+    </context>
+
+    <context id="library" style-ref="type">
+      <start>libname</start>
+      <end>;</end>
+      <include>
+        <context id="library-type" class="no-spell-check" style-ref="keyword">
+          <keyword>odbc</keyword>
+          <keyword>dsn</keyword>
+          <keyword>dbcommit</keyword>
+          <keyword>readbuff</keyword>
+          <keyword>insertbuff</keyword>
+        </context>
+        <context ref="def:string"/>
+        <context ref="def:single-quoted-string"/>
+        <context ref="def:c-like-comment-multiline"/>
+      </include>
+    </context>
+
+    <context id="options" style-ref="type">
+      <start>options</start>
+      <end>;</end>
+      <include>
+        <context id="option-type" class="no-spell-check" style-ref="keyword">
+          <keyword>dbidirectexec</keyword>
+          <keyword>sastrace</keyword>
+          <keyword>dlcreatedir</keyword>
+          <keyword>macrogen</keyword>
+          <keyword>symbolgen</keyword>
+          <keyword>mlogic</keyword>
+          <keyword>mprint</keyword>
+          <keyword>mfile</keyword>
+          <keyword>mprintnest</keyword>
+          <keyword>threads</keyword>
+          <keyword>debug</keyword>
+        </context>
+      </include>
+    </context>
+
+    <context id="sas">
+      <include>
+        <context ref="line-comment"/>
+        <context ref="def:c-like-comment-multiline"/>
+        <context ref="proc-sql"/>
+        <context ref="fed-sql"/>
+        <context ref="keywords"/>
+        <context ref="preprocessor"/>
+        <context ref="def:string"/>
+        <context ref="def:single-quoted-string"/>
+        <context ref="def:float"/>
+        <context ref="def:decimal"/>
+        <context ref="def:octal"/>
+        <context ref="def:hexadecimal"/>
+        <context ref="special-constants"/>
+        <context ref="boolean"/>
+        <context ref="types"/>
+        <context ref="library"/>
+        <context ref="options"/>
+      </include>
+    </context>
+  </definitions>
+</language>

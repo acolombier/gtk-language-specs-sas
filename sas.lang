@@ -39,14 +39,13 @@
   <default-regex-options case-sensitive="false"/>
 
   <definitions>
-    <context id="embedded-lang-hook">
-      <start>\%{def:never-match}</start>
-      <end></end>
+	
+	<context id="variable" end-parent="true" style-ref="def:identifier">
+      <match>&amp;[a-zA-Z0-9_]+\.[0-9]*</match>
     </context>
-
+    
     <context id="sas-sql">
       <include>
-        <context ref="embedded-lang-hook"/>
         <!-- Some cleaning to do to remove none standard SAS SQL -->
         <context ref="sql:ansi-datatypes"/>
         <context ref="sql:sql-ds-and-db2-datatypes"/>
@@ -81,6 +80,9 @@
         <context ref="sql:sql-statements"/>
         <context ref="sql:operators"/>
         <context ref="sql:conditions"/>
+<!--
+        <context ref="variable"/>
+-->
       </include>
     </context>
 
@@ -114,9 +116,12 @@
 
     <context id="keywords" style-ref="keyword">
       <keyword>if</keyword>
+      <keyword>else</keyword>
       <keyword>and</keyword>
       <keyword>or</keyword>
       <keyword>set</keyword>
+      <keyword>format</keyword>
+      <keyword>retain</keyword>
       <keyword>then</keyword>
       <keyword>keep</keyword>
       <keyword>drop</keyword>
@@ -136,6 +141,7 @@
       <keyword>sort</keyword>
       <keyword>dm</keyword>
       <keyword>ne</keyword>
+      <keyword>lag</keyword>
       <keyword>\.</keyword>
     </context>
 
@@ -144,7 +150,7 @@
       <keyword>TRUE</keyword>
     </context>
 
-    <context id="types" style-ref="def:builtin">
+    <context id="procedures" style-ref="def:builtin">
       <keyword>proc</keyword>
       <keyword>run</keyword>
       <keyword>data</keyword>
@@ -167,6 +173,10 @@
       </include>
     </context>
 
+    <context id="types" style-ref="type">
+		<keyword>date9</keyword>
+	</context>
+	
     <context id="options" style-ref="type">
       <start>options</start>
       <end>;</end>
@@ -203,9 +213,11 @@
         <context ref="def:hexadecimal"/>
         <context ref="special-constants"/>
         <context ref="boolean"/>
-        <context ref="types"/>
+        <context ref="procedures"/>
         <context ref="library"/>
         <context ref="options"/>
+        <context ref="types"/>
+        <context ref="variable"/>
       </include>
     </context>
   </definitions>
